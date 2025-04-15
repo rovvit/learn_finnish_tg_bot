@@ -1,2 +1,4 @@
 # learn_finnish_tg_bot
-bot for helping to learn suomea
+Hei!
+
+I'm learning finnish and I wanted to help myself
