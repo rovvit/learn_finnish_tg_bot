@@ -1,34 +1,28 @@
-# handlers/start.py
 from aiogram import Router
-from aiogram.filters import CommandStart, Command, StateFilter
-from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from aiogram.types import KeyboardButton
-
+from aiogram.filters import CommandStart, StateFilter
+from aiogram.fsm.context import FSMContext
 from states import AppState
-
-HELP_COMMANDS = """
-Список команд:
-/start - начать
-/help - помощь
-/stop - выйти из игры
-"""
+from handlers.numbers_handler import choose_difficulty as numbers_choose_difficulty
+from handlers.colors_handler import choose_mode as colors_start
+from utils.ui import show_game_menu
 
 start_router = Router()
 
-@start_router.message(StateFilter(None), CommandStart())
+@start_router.message(CommandStart(), StateFilter(None))
 async def cmd_start(message: Message, state: FSMContext):
-    builder = ReplyKeyboardBuilder()
-    builder.row(KeyboardButton(text="Числа"))
-    await message.answer("Выбери во что играть", reply_markup=builder.as_markup(resize_keyboard=True))
-    await state.set_state(AppState.choosing_game_type)
+    await show_game_menu(message, state)
 
-@start_router.message(Command("help"))
-async def cmd_help(message: Message):
-    await message.answer(HELP_COMMANDS)
-
-@start_router.message(Command("stop"))
-async def cmd_stop(message: Message, state: FSMContext):
-    await message.answer("Игра остановлена.")
-    await state.set_state(AppState.choosing_game_type)
+@start_router.message(StateFilter(AppState.choosing_game_type))
+async def choose_game(message: Message, state: FSMContext):
+    text = message.text.strip().lower()
+    if text == "числа":
+        await state.set_state(AppState.numbers_game)
+        await message.answer("Вы выбрали игру Числа. Начинаем!")
+        await numbers_choose_difficulty(message, state)
+    elif text == "цвета":
+        await state.set_state(AppState.colors_game)
+        await message.answer("Вы выбрали игру Цвета. Начинаем!")
+        await colors_start(message, state)
+    else:
+        await message.answer("Пожалуйста, выберите игру, используя кнопки.")

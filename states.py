@@ -1,7 +1,15 @@
-from aiogram.fsm.state import StatesGroup, State
+from aiogram.fsm.state import State, StatesGroup
 
 class AppState(StatesGroup):
     choosing_game_type = State()
-    choosing_game_subtype = State()
+    numbers_game = State()
+    colors_game = State()
+
+class NumbersStates(StatesGroup):
+    choosing_difficulty = State()
     game_in_progress = State()
-    numbers_game_in_progress = State()
+
+class ColorsStates(StatesGroup):
+    choosing_mode = State()
+    choosing_difficulty = State()
+    game_in_progress = State()
