@@ -90,7 +90,7 @@ async def check_answer(message: Message, state: FSMContext):
         builder.row(KeyboardButton(text="Завершить игру"))
 
         await message.answer(
-            f"Какой это цвет? {correct_answer["emoji"]} ({correct_answer["ru"]})",
+            f"✅ Верно!\n\nКакой это цвет? {correct_answer["emoji"]} ({correct_answer["ru"]})",
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
     else:

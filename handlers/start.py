@@ -1,6 +1,6 @@
 from aiogram import Router
 from aiogram.types import Message
-from aiogram.filters import CommandStart, StateFilter
+from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from states import AppState
 from handlers.numbers_handler import choose_difficulty as numbers_choose_difficulty
@@ -9,7 +9,7 @@ from utils.ui import show_game_menu
 
 start_router = Router()
 
-@start_router.message(CommandStart(), StateFilter(None))
+@start_router.message(StateFilter(None))
 async def cmd_start(message: Message, state: FSMContext):
     await show_game_menu(message, state)
 
