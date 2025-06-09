@@ -38,3 +38,6 @@ class ColorsGame:
 
     def check_answer(self, answer: str) -> bool:
         return answer.lower().strip() == self.correct_color["fi"].lower().strip()
+
+    def get_random_color(self):
+        return random.sample(self.COLORS, 1)[0]

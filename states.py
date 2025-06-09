@@ -11,5 +11,6 @@ class NumbersStates(StatesGroup):
 
 class ColorsStates(StatesGroup):
     choosing_mode = State()
-    choosing_difficulty = State()
+    choosing_difficulty_emoji = State()
     game_in_progress = State()
+    word_to_word = State()
