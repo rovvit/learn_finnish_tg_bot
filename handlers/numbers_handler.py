@@ -7,6 +7,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from games import NumbersGame
 from states import AppState, NumbersStates
 from utils.ui import show_game_menu
+from utils.diff_answer import diff_answers
 
 numbers_router = Router()
 game = NumbersGame()
@@ -73,7 +74,7 @@ async def check_answer(message: Message, state: FSMContext):
         builder.row(KeyboardButton(text="Завершить игру"))
         await message.answer(f"✅ Верно!\n\nСледующее число: {number}", reply_markup=builder.as_markup(resize_keyboard=True))
     else:
-        highlighted = game.diff_answers(answer, correct_answer)
+        highlighted = diff_answers(answer, correct_answer)
         builder = ReplyKeyboardBuilder()
         builder.row(KeyboardButton(text="Завершить игру"))
         await message.answer(
