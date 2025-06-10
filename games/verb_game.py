@@ -150,6 +150,7 @@ class VerbGame(BaseGame):
     }
 
     def new_word_question(self):
+        self.inner_count += 1
         selected_verb = random.choice(self.ITEMS)
         selected_pronoun = random.randint(1, 6)
         answer = self.conjure_verb(selected_verb, selected_pronoun)
@@ -161,6 +162,10 @@ class VerbGame(BaseGame):
         }
 
     def check_conjuration(self, answer: str) -> bool:
+        if answer.lower().strip() == self.correct_answer.lower().strip():
+            self.correct_count += 1
+        else:
+            self.incorrect_count += 1
         return answer.lower().strip() == self.correct_answer.lower().strip()
 
     def conjure_verb(self, verb_obj, pronoun=1) -> str:

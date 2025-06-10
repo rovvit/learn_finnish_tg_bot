@@ -46,7 +46,6 @@ async def choose_difficulty(message: Message, state: FSMContext):
             reply_markup=ReplyKeyboardRemove()
         )
         question = game.new_word_question()
-        await state.update_data(correct_answer=question["fi"])
         await state.set_state(ColorsStates.word_to_word)
         builder = ReplyKeyboardBuilder()
         builder.row(KeyboardButton(text="Завершить игру"))
@@ -61,7 +60,8 @@ async def choose_difficulty(message: Message, state: FSMContext):
 @colors_router.message(StateFilter(ColorsStates.choosing_difficulty_emoji))
 async def multiple_emoji_color(message: Message, state: FSMContext):
     text = message.text.strip()
-    if text == "Завершить игру":
+    if text == "Завершить игру" or game.inner_count == 10:
+        await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
         await show_game_menu(message, state)
         return
 
@@ -75,7 +75,6 @@ async def multiple_emoji_color(message: Message, state: FSMContext):
     question = game.new_quiz_question(count)
     correct_answer = question["correct_answer"]
     options = question["options"]
-    await state.update_data(correct_color=correct_answer["fi"])
 
     builder = ReplyKeyboardBuilder()
     for i in range(0, len(options), 4):
@@ -90,21 +89,19 @@ async def multiple_emoji_color(message: Message, state: FSMContext):
 
 @colors_router.message(StateFilter(ColorsStates.game_in_progress))
 async def check_quiz_answer(message: Message, state: FSMContext):
-    if message.text == "Завершить игру":
+    if message.text == "Завершить игру" or game.inner_count == 10:
+        await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
         await show_game_menu(message, state)
         return
 
     data = await state.get_data()
-    correct_answer = data.get("correct_color")
     count = data.get("color_count", 4)
 
     user_answer = message.text.strip()
-
-    if user_answer == correct_answer:
+    if game.check_answer(user_answer, 'fi'):
         question = game.new_quiz_question(count)
         new_question = question["correct_answer"]
         options = question["options"]
-        await state.update_data(correct_color=correct_answer["fi"])
 
         builder = ReplyKeyboardBuilder()
         for i in range(0, len(options), 4):
@@ -145,5 +142,10 @@ async def emoji_to_word_check(message: Message, state: FSMContext):
             parse_mode="HTML",
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
-    new_question = game.new_word_question()
-    await message.answer(f"Напиши цвет на финском: {new_question["ru"]} {new_question["emoji"]}", reply_markup=builder.as_markup(resize_keyboard=True))
+    if game.inner_count == 10:
+        await message.answer(f"Игра заверешна! Итого правильных ответов: {game.correct_count}/{game.inner_count}")
+        await show_game_menu(message, state)
+        return
+    else:
+        new_question = game.new_word_question()
+        await message.answer(f"Напиши цвет на финском: {new_question["ru"]} {new_question["emoji"]}", reply_markup=builder.as_markup(resize_keyboard=True))

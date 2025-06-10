@@ -85,7 +85,8 @@ async def start_end_game_or_stop(message: Message, state: FSMContext):
 
 @verbs_router.message(StateFilter(VerbStates.game_in_progress))
 async def check_end_answer(message: Message, state: FSMContext):
-    if message.text == "Завершить игру":
+    if message.text == "Завершить игру" or game.inner_count == 10:
+        await message.answer(f"Игра заверешна! Итоговый счёт: {game.correct_count}/{game.inner_count}")
         await show_game_menu(message, state)
         return
 
@@ -109,7 +110,8 @@ async def check_end_answer(message: Message, state: FSMContext):
 @verbs_router.message(StateFilter(VerbStates.choosing_difficulty))
 async def check_word_to_word_answer(message: Message, state: FSMContext):
     text = message.text.strip()
-    if message.text == "Завершить игру":
+    if message.text == "Завершить игру" or game.inner_count == 10:
+        await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
         await show_game_menu(message, state)
         return
 
@@ -137,7 +139,8 @@ async def check_word_to_word_answer(message: Message, state: FSMContext):
 
 @verbs_router.message(StateFilter(VerbStates.word_to_word))
 async def check_quiz_answer(message: Message, state: FSMContext):
-    if message.text == "Завершить игру":
+    if message.text == "Завершить игру" or game.inner_count == 10:
+        await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
         await show_game_menu(message, state)
         return
 

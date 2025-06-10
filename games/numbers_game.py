@@ -6,6 +6,7 @@ from games.base_quiz_game import BaseGame
 
 class NumbersGame(BaseGame):
     def new_question(self, max_number: int = 100):
+        self.inner_count += 1
         self.correct_answer = randint(1, max_number)
         return self.correct_answer
 
@@ -13,6 +14,10 @@ class NumbersGame(BaseGame):
         if self.correct_answer is None:
             return False
         correct = num2words(self.correct_answer, lang='fi')
+        if answer.strip().lower() == correct.strip().lower():
+            self.correct_count += 1
+        else:
+            self.incorrect_count += 1
         return answer.strip().lower() == correct.strip().lower()
 
     def get_correct_answer(self) -> str:
