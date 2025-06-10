@@ -202,8 +202,10 @@ class VerbGame:
             case _:
                 raise Exception('There is no such verb type!')
 
-        if pronoun == 3 or pronoun == 6:
+        if pronoun == 3:
             return verb_base + self.make_end_for_third_person(verb_base)
+        if pronoun == 6:
+            return verb_base + self.make_end_for_third_person(verb_base, True)
         return verb_base + self.PRONOUNS[pronoun]['ending']
 
     def make_end_for_third_person(self, verb_base: str, plural=False) -> str:
