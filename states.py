@@ -19,3 +19,5 @@ class ColorsStates(StatesGroup):
 class VerbStates(StatesGroup):
     choosing_mode = State()
     game_in_progress = State()
+    choosing_difficulty = State()
+    word_to_word = State()

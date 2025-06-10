@@ -221,4 +221,13 @@ class VerbGame:
     def get_correct_answer(self) -> str:
         return self.correct_verb.lower()
 
+    def new_question_multiple(self, options_count=4):
+        options = random.sample(self.VERBS, k=options_count)
+        self.correct_verb = random.choice(options)
+        return {
+            'correct_answer': self.correct_verb,
+            'options': options
+        }
+
+
 
