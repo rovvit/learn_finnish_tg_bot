@@ -17,18 +17,21 @@ async def cmd_start(message: Message, state: FSMContext):
 
 @start_router.message(StateFilter(AppState.choosing_game_type))
 async def choose_game(message: Message, state: FSMContext):
-    text = message.text.strip().lower()
-    if text == "числа":
-        await state.set_state(AppState.numbers_game)
-        await message.answer("Вы выбрали игру Числа. Начинаем!")
-        await numbers_choose_difficulty(message, state)
-    elif text == "цвета":
-        await state.set_state(AppState.colors_game)
-        await message.answer("Вы выбрали игру Цвета. Начинаем!")
-        await colors_start(message, state)
-    elif text == "глаголы":
-        await state.set_state(AppState.verbs_game)
-        await message.answer("Вы выбрали игру Глаголы. Начинаем!")
-        await verbs_start(message, state)
-    else:
-        await message.answer("Пожалуйста, выберите игру, используя кнопки.")
+    try:
+        text = message.text.strip().lower()
+        if text == "числа":
+            await state.set_state(AppState.numbers_game)
+            await message.answer("Вы выбрали игру Числа. Начинаем!")
+            await numbers_choose_difficulty(message, state)
+        elif text == "цвета":
+            await state.set_state(AppState.colors_game)
+            await message.answer("Вы выбрали игру Цвета. Начинаем!")
+            await colors_start(message, state)
+        elif text == "глаголы":
+            await state.set_state(AppState.verbs_game)
+            await message.answer("Вы выбрали игру Глаголы. Начинаем!")
+            await verbs_start(message, state)
+        else:
+            await message.answer("Пожалуйста, выберите игру, используя кнопки.")
+    except Exception:
+        await message.answer("Пожалуйста, выберите из предложенных вариантов.")
