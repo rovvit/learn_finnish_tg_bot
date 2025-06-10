@@ -10,7 +10,7 @@ class NumbersGame(BaseGame):
         self.correct_answer = randint(1, max_number)
         return self.correct_answer
 
-    def check_answer(self, answer: str) -> bool:
+    def check_answer(self, answer: str, *kwargs) -> bool:
         if self.correct_answer is None:
             return False
         correct = num2words(self.correct_answer, lang='fi')
