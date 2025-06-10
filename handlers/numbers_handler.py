@@ -12,7 +12,6 @@ from utils.diff_answer import diff_answers
 numbers_router = Router()
 game = NumbersGame()
 
-# 1. Пользователь выбрал "Числа"
 @numbers_router.message(StateFilter(AppState.numbers_game), F.text.casefold() == "числа")
 async def choose_difficulty(message: Message, state: FSMContext):
     builder = ReplyKeyboardBuilder()
@@ -25,7 +24,6 @@ async def choose_difficulty(message: Message, state: FSMContext):
     await message.answer("Выбери уровень сложности:", reply_markup=builder.as_markup(resize_keyboard=True))
     await state.set_state(NumbersStates.choosing_difficulty)
 
-# 2. Пользователь выбрал уровень сложности или завершил игру
 @numbers_router.message(StateFilter(NumbersStates.choosing_difficulty))
 async def start_game_or_stop(message: Message, state: FSMContext):
     if message.text == "Завершить игру":

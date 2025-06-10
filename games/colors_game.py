@@ -1,7 +1,11 @@
 import random
 
-class ColorsGame:
-    COLORS = [
+from games.base_quiz_game import BaseGame
+
+
+
+class ColorsGame(BaseGame):
+    ITEMS = [
         {"emoji": "🔴", "ru": "красный", "fi": "punainen"},
         {"emoji": "🟠", "ru": "оранжевый", "fi": "oranssi"},
         {"emoji": "🟡", "ru": "жёлтый", "fi": "keltainen"},
@@ -24,20 +28,3 @@ class ColorsGame:
         {"emoji": "🌕", "ru": "кремовый", "fi": "kerma"},
         {"emoji": "🩶", "ru": "серый", "fi": "harmaa"},
     ]
-
-    def __init__(self):
-        self.correct_color = None
-
-    def new_question(self, options_count: int = 4):
-        options = random.sample(self.COLORS, k=options_count)
-        self.correct_color = random.choice(options)
-        return {
-            "correct_answer": self.correct_color,
-            "options": [color["fi"] for color in options],
-        }
-
-    def check_answer(self, answer: str) -> bool:
-        return answer.lower().strip() == self.correct_color["fi"].lower().strip()
-
-    def get_random_color(self):
-        return random.sample(self.COLORS, 1)[0]

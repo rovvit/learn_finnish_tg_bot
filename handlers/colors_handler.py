@@ -12,7 +12,7 @@ colors_router = Router()
 game = ColorsGame()
 MODES = {
     "EMOJI": "Выбор цвета по эмодзи",
-    "RU_TO_FI": "Написать слово по эмодзи",
+    "EMOJI_TO_WORD": "Написать слово по эмодзи",
     "OTHER": "Другой режим (скоро)"
 }
 
@@ -21,7 +21,7 @@ async def choose_mode(message: Message, state: FSMContext):
     builder = ReplyKeyboardBuilder()
     builder.row(
         KeyboardButton(text=MODES["EMOJI"]),
-        KeyboardButton(text=MODES["RU_TO_FI"]),
+        KeyboardButton(text=MODES["EMOJI_TO_WORD"]),
         KeyboardButton(text=MODES["OTHER"])
     )
     await message.answer("Выбери режим игры:", reply_markup=builder.as_markup(resize_keyboard=True))
@@ -30,7 +30,7 @@ async def choose_mode(message: Message, state: FSMContext):
 @colors_router.message(StateFilter(ColorsStates.choosing_mode))
 async def choose_difficulty(message: Message, state: FSMContext):
     if message.text == MODES["EMOJI"]:
-        await state.update_data(mode="emoji_to_word")
+        await state.update_data(mode="emoji")
         builder = ReplyKeyboardBuilder()
         builder.row(
             KeyboardButton(text="4 цвета"),
@@ -40,26 +40,26 @@ async def choose_difficulty(message: Message, state: FSMContext):
         )
         await message.answer("Выбери уровень сложности:", reply_markup=builder.as_markup(resize_keyboard=True))
         await state.set_state(ColorsStates.choosing_difficulty_emoji)
-    elif message.text == MODES["RU_TO_FI"]:
+    elif message.text == MODES["EMOJI_TO_WORD"]:
         await message.answer(
-            "Отлично! Начинаем игру.",
+            "Отлично! Начинаем игру.\n\nПравила: необходимо написать цвет на финнском",
             reply_markup=ReplyKeyboardRemove()
         )
-        question = game.get_random_color()
+        question = game.new_word_question()
         await state.update_data(correct_answer=question["fi"])
         await state.set_state(ColorsStates.word_to_word)
         builder = ReplyKeyboardBuilder()
         builder.row(KeyboardButton(text="Завершить игру"))
 
         await message.answer(
-            f"Как по-фински этот цвет? {question['emoji']} {question['ru']}",
+            f"Как по-фински называется этот цвет? {question['emoji']} ({question['ru']})",
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
     else:
         await message.answer("Этот режим пока в разработке.")
 
 @colors_router.message(StateFilter(ColorsStates.choosing_difficulty_emoji))
-async def start_game_or_stop(message: Message, state: FSMContext):
+async def multiple_emoji_color(message: Message, state: FSMContext):
     text = message.text.strip()
     if text == "Завершить игру":
         await show_game_menu(message, state)
@@ -72,14 +72,14 @@ async def start_game_or_stop(message: Message, state: FSMContext):
         return
 
     await state.update_data(color_count=count)
-    question = game.new_question(count)
+    question = game.new_quiz_question(count)
     correct_answer = question["correct_answer"]
     options = question["options"]
     await state.update_data(correct_color=correct_answer["fi"])
 
     builder = ReplyKeyboardBuilder()
     for i in range(0, len(options), 4):
-        builder.row(*[KeyboardButton(text=color) for color in options[i:i+4]])
+        builder.row(*[KeyboardButton(text=color['fi']) for color in options[i:i+4]])
     builder.row(KeyboardButton(text="Завершить игру"))
 
     await message.answer(
@@ -89,7 +89,7 @@ async def start_game_or_stop(message: Message, state: FSMContext):
     await state.set_state(ColorsStates.game_in_progress)
 
 @colors_router.message(StateFilter(ColorsStates.game_in_progress))
-async def check_answer(message: Message, state: FSMContext):
+async def check_quiz_answer(message: Message, state: FSMContext):
     if message.text == "Завершить игру":
         await show_game_menu(message, state)
         return
@@ -101,18 +101,18 @@ async def check_answer(message: Message, state: FSMContext):
     user_answer = message.text.strip()
 
     if user_answer == correct_answer:
-        question = game.new_question(count)
-        correct_answer = question["correct_answer"]
+        question = game.new_quiz_question(count)
+        new_question = question["correct_answer"]
         options = question["options"]
         await state.update_data(correct_color=correct_answer["fi"])
 
         builder = ReplyKeyboardBuilder()
         for i in range(0, len(options), 4):
-            builder.row(*[KeyboardButton(text=color) for color in options[i:i+4]])
+            builder.row(*[KeyboardButton(text=color['fi']) for color in options[i:i+4]])
         builder.row(KeyboardButton(text="Завершить игру"))
 
         await message.answer(
-            f"✅ Верно!\n\nКакой это цвет? {correct_answer["emoji"]} ({correct_answer["ru"]})",
+            f"✅ Верно!\n\nКакой это цвет? {new_question["emoji"]} ({new_question["ru"]})",
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
     else:
@@ -121,7 +121,7 @@ async def check_answer(message: Message, state: FSMContext):
         )
 
 @colors_router.message(StateFilter(ColorsStates.word_to_word))
-async def word_to_word_check(message: Message, state: FSMContext):
+async def emoji_to_word_check(message: Message, state: FSMContext):
     if message.text == "Завершить игру":
         await show_game_menu(message, state)
         return
@@ -133,7 +133,7 @@ async def word_to_word_check(message: Message, state: FSMContext):
     builder = ReplyKeyboardBuilder()
     builder.row(KeyboardButton(text="Завершить игру"))
 
-    if answer == correct_answer:
+    if game.check_answer(answer, 'fi'):
         await message.answer("✅ Верно!")
     else:
         highlighted = diff_answers(answer, correct_answer)
@@ -145,7 +145,5 @@ async def word_to_word_check(message: Message, state: FSMContext):
             parse_mode="HTML",
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
-
-    color = game.get_random_color()
-
-    await message.answer(f"Напиши цвет на финском: {color["ru"]} {color["emoji"]}", reply_markup=builder.as_markup(resize_keyboard=True))
+    new_question = game.new_word_question()
+    await message.answer(f"Напиши цвет на финском: {new_question["ru"]} {new_question["emoji"]}", reply_markup=builder.as_markup(resize_keyboard=True))

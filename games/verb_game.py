@@ -1,7 +1,10 @@
 import random
 
-class VerbGame:
-    VERBS = [
+from games.base_quiz_game import BaseGame
+
+
+class VerbGame(BaseGame):
+    ITEMS = [
         {'ru': 'быть', 'fi': 'olla', 'type': 3},
         {'ru': 'кушать', 'fi': 'syödä', 'type': 2},
         {'ru': 'жить', 'fi': 'asua', 'type': 1},
@@ -146,27 +149,19 @@ class VerbGame:
         }
     }
 
-    def __init__(self):
-        self.correct_verb = None
-
-    def new_choose_one_question(self, options_count=4):
-        options = random.sample(self.VERBS, k=options_count)
-        self.correct_verb = random.choice(options)
-        return {
-            'correct_verb': self.correct_verb,
-            'options': options
-        }
-
-    def new_end_question(self):
-        selected_verb = random.choice(self.VERBS)
+    def new_word_question(self):
+        selected_verb = random.choice(self.ITEMS)
         selected_pronoun = random.randint(1, 6)
         answer = self.conjure_verb(selected_verb, selected_pronoun)
-        self.correct_verb = answer
+        self.correct_answer = answer
         return {
             'answer': answer,
             'verb': selected_verb,
             'pronoun': self.PRONOUNS[selected_pronoun]['pronoun']
         }
+
+    def check_conjuration(self, answer: str) -> bool:
+        return answer.lower().strip() == self.correct_answer.lower().strip()
 
     def conjure_verb(self, verb_obj, pronoun=1) -> str:
         verb = verb_obj['fi']
@@ -216,20 +211,3 @@ class VerbGame:
         if verb_base.endswith('aa') or verb_base.endswith('ää'):
             return ''
         return verb_base[-1]
-
-    def check_answer(self, answer: str) -> bool:
-        return answer.lower() == self.correct_verb.lower()
-
-    def get_correct_answer(self) -> str:
-        return self.correct_verb.lower()
-
-    def new_question_multiple(self, options_count=4):
-        options = random.sample(self.VERBS, k=options_count)
-        self.correct_verb = random.choice(options)
-        return {
-            'correct_answer': self.correct_verb,
-            'options': options
-        }
-
-
-

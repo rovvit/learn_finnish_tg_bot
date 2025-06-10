@@ -1,21 +1,21 @@
 from num2words import num2words
 from random import randint
 
-class NumbersGame:
-    def __init__(self):
-        self.current_number = None
+from games.base_quiz_game import BaseGame
 
-    def new_question(self, max_number=100):
-        self.current_number = randint(1, max_number)
-        return self.current_number
+
+class NumbersGame(BaseGame):
+    def new_question(self, max_number: int = 100):
+        self.correct_answer = randint(1, max_number)
+        return self.correct_answer
 
     def check_answer(self, answer: str) -> bool:
-        if self.current_number is None:
+        if self.correct_answer is None:
             return False
-        correct = num2words(self.current_number, lang='fi')
+        correct = num2words(self.correct_answer, lang='fi')
         return answer.strip().lower() == correct.strip().lower()
 
     def get_correct_answer(self) -> str:
-        if self.current_number is None:
+        if self.correct_answer is None:
             return ""
-        return num2words(self.current_number, lang='fi')
+        return num2words(self.correct_answer, lang='fi')
