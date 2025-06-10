@@ -38,11 +38,11 @@ async def choose_difficulty(message: Message, state: FSMContext):
             KeyboardButton(text="12 цветов"),
             KeyboardButton(text="Завершить игру")
         )
-        await message.answer("Выбери уровень сложности:", reply_markup=builder.as_markup(resize_keyboard=True))
+        await message.answer("Правила игры: тебе будет задан цвет, тебе нужно будет выбрать правильный вариант.\nИгра идёт до 10 вопросов.\n\nВыбери уровень сложности:", reply_markup=builder.as_markup(resize_keyboard=True))
         await state.set_state(ColorsStates.choosing_difficulty_emoji)
     elif message.text == MODES["EMOJI_TO_WORD"]:
         await message.answer(
-            "Отлично! Начинаем игру.\n\nПравила: необходимо написать цвет на финнском",
+            "Отлично! Начинаем игру.\n\nПравила: необходимо написать заданный цвет на финнском",
             reply_markup=ReplyKeyboardRemove()
         )
         question = game.new_word_question()

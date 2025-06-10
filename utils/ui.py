@@ -12,7 +12,13 @@ async def show_game_menu(message: Message, state: FSMContext):
         KeyboardButton(text="Глаголы")
     )
     await message.answer(
-        "Выбери во что играть",
+        '''
+        Выбери во что играть.
+        
+        Числа - если хочешь проверить знания чисел
+        Цвета - если хочешь проверить знания цветов
+        Глаголы - если хочешь проверить знание глаголов и умение их склонять
+        ''',
         reply_markup=builder.as_markup(resize_keyboard=True)
     )
     await state.set_state(AppState.choosing_game_type)

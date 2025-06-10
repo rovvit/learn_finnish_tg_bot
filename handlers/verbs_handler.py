@@ -68,7 +68,7 @@ async def start_end_game_or_stop(message: Message, state: FSMContext):
         )
         await state.update_data(mode='fi-ru')
         await message.answer(
-            f"Выбери количество вариантов:",
+            f"Правила: тебе будет загадан глагол, нужно будет выбрать, какой перевод правильный.\nИгра идёт до 10 вопросов.\n\nВыбери количество вариантов:",
             reply_markup=builder.as_markup(resize_keyboard=True))
         await state.set_state(VerbStates.choosing_difficulty)
     if message.text == MODES['conjugation']:
