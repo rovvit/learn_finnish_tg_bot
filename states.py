@@ -4,6 +4,7 @@ class AppState(StatesGroup):
     choosing_game_type = State()
     numbers_game = State()
     colors_game = State()
+    verbs_game = State()
 
 class NumbersStates(StatesGroup):
     choosing_difficulty = State()
@@ -14,3 +15,7 @@ class ColorsStates(StatesGroup):
     choosing_difficulty_emoji = State()
     game_in_progress = State()
     word_to_word = State()
+
+class VerbStates(StatesGroup):
+    choosing_mode = State()
+    game_in_progress = State()

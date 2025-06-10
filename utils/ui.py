@@ -8,7 +8,8 @@ async def show_game_menu(message: Message, state: FSMContext):
     builder = ReplyKeyboardBuilder()
     builder.row(
         KeyboardButton(text="Числа"),
-        KeyboardButton(text="Цвета")
+        KeyboardButton(text="Цвета"),
+        KeyboardButton(text="Глаголы")
     )
     await message.answer(
         "Выбери во что играть",
