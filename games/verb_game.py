@@ -213,6 +213,6 @@ class VerbGame(BaseGame):
             if 'a' in verb_base or 'o' in verb_base or 'u' in verb_base:
                 return 'vat'
             return 'vät'
-        if verb_base.endswith('aa') or verb_base.endswith('ää'):
+        if verb_base.endswith('aa') or verb_base.endswith('ää') or verb_base.endswith('uo'):
             return ''
         return verb_base[-1]
