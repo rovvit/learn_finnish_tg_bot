@@ -58,7 +58,7 @@ async def choose_difficulty(message: Message, state: FSMContext):
         await message.answer("Этот режим пока в разработке.")
 
 @colors_router.message(StateFilter(ColorsStates.choosing_difficulty_emoji))
-async def multiple_emoji_color(message: Message, state: FSMContext):
+async def color_quiz_emoji(message: Message, state: FSMContext):
     text = message.text.strip()
     if text == "Завершить игру" or game.inner_count == 10:
         await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
