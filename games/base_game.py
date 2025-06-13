@@ -16,6 +16,7 @@ class BaseGame():
         self.inner_count += 1
         options = random.sample(self.ITEMS, k=options_count)
         self.correct_answer = random.choice(options)
+        self.ITEMS.remove(self.correct_answer)
         return {
             "correct_answer": self.correct_answer,
             "options": [item for item in options],
