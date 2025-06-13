@@ -1,6 +1,7 @@
 import random
 
 from games.base_quiz_game import BaseGame
+from utils.KPT_transform import KPT_transform
 
 
 class VerbGame(BaseGame):
@@ -181,7 +182,7 @@ class VerbGame(BaseGame):
 
         match verb_obj['type']:
             case 1:
-                verb_base = verb[:-1]
+                verb_base = KPT_transform(verb[:-1])
             case 2:
                 verb_base = verb[:-2]
             case 3:
