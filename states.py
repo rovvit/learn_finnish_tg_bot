@@ -5,6 +5,7 @@ class AppState(StatesGroup):
     numbers_game = State()
     colors_game = State()
     verbs_game = State()
+    weather_game = State()
 
 class NumbersStates(StatesGroup):
     choosing_difficulty = State()
@@ -21,3 +22,8 @@ class VerbStates(StatesGroup):
     game_in_progress = State()
     choosing_difficulty = State()
     word_to_word = State()
+
+class WeatherStates(StatesGroup):
+    game_in_progress = State()
+    word_to_word = State()
+    choosing_mode = State()

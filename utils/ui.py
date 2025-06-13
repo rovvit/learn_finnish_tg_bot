@@ -9,7 +9,8 @@ async def show_game_menu(message: Message, state: FSMContext):
     builder.row(
         KeyboardButton(text="Числа"),
         KeyboardButton(text="Цвета"),
-        KeyboardButton(text="Глаголы")
+        KeyboardButton(text="Глаголы"),
+        KeyboardButton(text="Погода")
     )
     await message.answer(
         '''
@@ -18,6 +19,7 @@ async def show_game_menu(message: Message, state: FSMContext):
         Числа - если хочешь проверить знания чисел
         Цвета - если хочешь проверить знания цветов
         Глаголы - если хочешь проверить знание глаголов и умение их склонять
+        Погода - если хочешь проверить знания слов из темы "Погода"
         ''',
         reply_markup=builder.as_markup(resize_keyboard=True)
     )

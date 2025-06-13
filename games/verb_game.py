@@ -1,6 +1,6 @@
 import random
 
-from games.base_quiz_game import BaseGame
+from games.base_game import BaseGame
 from utils.KPT_transform import KPT_transform
 
 

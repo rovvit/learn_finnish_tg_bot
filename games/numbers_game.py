@@ -1,7 +1,7 @@
 from num2words import num2words
 from random import randint
 
-from games.base_quiz_game import BaseGame
+from games.base_game import BaseGame
 
 
 class NumbersGame(BaseGame):

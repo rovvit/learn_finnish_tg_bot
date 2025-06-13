@@ -5,6 +5,7 @@ from handlers.start import start_router
 from handlers.numbers_handler import numbers_router
 from handlers.colors_handler import colors_router
 from handlers.verbs_handler import verbs_router
+from handlers.weather_handler import weather_router
 
 
 async def main():
@@ -12,6 +13,7 @@ async def main():
     dp.include_router(numbers_router)
     dp.include_router(colors_router)
     dp.include_router(verbs_router)
+    dp.include_router(weather_router)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
