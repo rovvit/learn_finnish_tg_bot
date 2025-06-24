@@ -15,6 +15,7 @@ PAIRS = {
 }
 
 VOWELS = [ 'a', 'o', 'u', 'e', 'i', 'ä', 'ö', 'y' ]
+HARD_VOWELS = [ 'a', 'o', 'u' ]
 
 
 def KPT_transform(word_base: str, is_forward: bool = True):

@@ -34,7 +34,7 @@ class NounsGame(BaseGame):
     def new_word_question(self):
         self.inner_count += 1
         selected_noun = NounWord(random.choice(self.ITEMS))
-        selected_case = random.randint(1, 1)
+        selected_case = random.randint(2, 2)
         answer = selected_noun.inflict(selected_case)
         self.correct_answer = answer
         return {
