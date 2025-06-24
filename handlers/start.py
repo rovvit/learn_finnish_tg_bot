@@ -8,6 +8,7 @@ from handlers.weather_handler import choose_mode as weather_start
 from states import AppState
 from handlers.numbers_handler import choose_difficulty as numbers_choose_difficulty
 from handlers.colors_handler import choose_mode as colors_start
+from handlers.nouns_handler import choose_mode as nouns_start
 from utils.ui import show_game_menu
 
 start_router = Router()
@@ -36,6 +37,10 @@ async def choose_game(message: Message, state: FSMContext):
             await state.set_state(AppState.weather_game)
             await message.answer("Вы выбрали игру Погода. Начинаем!")
             await weather_start(message, state)
+        elif text == "существительные":
+            await state.set_state(AppState.nouns_game)
+            await message.answer("Вы выбрали игру Существительные. Начинаем!")
+            await nouns_start(message, state)
         else:
             await message.answer("Пожалуйста, выберите игру, используя кнопки.")
     except Exception:
