@@ -27,3 +27,34 @@ async def show_game_menu(message: Message, state: FSMContext):
         reply_markup=builder.as_markup(resize_keyboard=True)
     )
     await state.set_state(AppState.choosing_game_type)
+
+def quiz_keyboard(options: list, key: str):
+    builder = ReplyKeyboardBuilder()
+    row = []
+    for item in options:
+        text = item[key]
+        button = KeyboardButton(text=text)
+
+        # Добавляем в текущий ряд, если текст короткий
+        if len(text) <= 14:
+            row.append(button)
+            if len(row) == 4 and len(text) <= 7:
+                builder.row(*row)
+                row = []
+            elif len(row) == 2 and len(text) > 7:
+                builder.row(*row)
+                row = []
+        else:
+            # если длинная кнопка — отправляем текущий ряд и добавляем её отдельно
+            if row:
+                builder.row(*row)
+                row = []
+            builder.row(button)
+
+    # добавляем остатки
+    if row:
+        builder.row(*row)
+
+    # завершить игру — последней строкой
+    builder.row(KeyboardButton(text="Завершить игру"))
+    return builder

@@ -3,7 +3,7 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, KeyboardButton, ReplyKeyboardRemove
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from utils.ui import show_game_menu
+from utils.ui import show_game_menu, quiz_keyboard
 from utils.diff_answer import diff_answers
 from games.colors_game import ColorsGame
 from states import AppState, ColorsStates
@@ -76,10 +76,11 @@ async def color_quiz_emoji(message: Message, state: FSMContext):
     correct_answer = question["correct_answer"]
     options = question["options"]
 
-    builder = ReplyKeyboardBuilder()
-    for i in range(0, len(options), 4):
-        builder.row(*[KeyboardButton(text=color['fi']) for color in options[i:i+4]])
-    builder.row(KeyboardButton(text="Завершить игру"))
+    # builder = ReplyKeyboardBuilder()
+    # for i in range(0, len(options), 4):
+    #     builder.row(*[KeyboardButton(text=color['fi']) for color in options[i:i+4]])
+    # builder.row(KeyboardButton(text="Завершить игру"))
+    builder = quiz_keyboard(options, 'fi')
 
     await message.answer(
         f"Какой это цвет? {correct_answer["emoji"]} ({correct_answer["ru"]})",
@@ -103,10 +104,11 @@ async def check_quiz_answer(message: Message, state: FSMContext):
         new_question = question["correct_answer"]
         options = question["options"]
 
-        builder = ReplyKeyboardBuilder()
-        for i in range(0, len(options), 4):
-            builder.row(*[KeyboardButton(text=color['fi']) for color in options[i:i+4]])
-        builder.row(KeyboardButton(text="Завершить игру"))
+        # builder = ReplyKeyboardBuilder()
+        # for i in range(0, len(options), 4):
+        #     builder.row(*[KeyboardButton(text=color['fi']) for color in options[i:i+4]])
+        # builder.row(KeyboardButton(text="Завершить игру"))
+        builder = quiz_keyboard(options, 'fi')
 
         await message.answer(
             f"✅ Верно!\n\nКакой это цвет? {new_question["emoji"]} ({new_question["ru"]})",

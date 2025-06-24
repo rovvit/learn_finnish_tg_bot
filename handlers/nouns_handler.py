@@ -6,7 +6,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from games.nouns_game import NounsGame
 from states import AppState, NounsStates
-from utils.ui import show_game_menu
+from utils.ui import show_game_menu, quiz_keyboard
 from utils.diff_answer import diff_answers
 
 nouns_router = Router()
@@ -133,28 +133,7 @@ async def check_word_to_word_answer(message: Message, state: FSMContext):
     correct_answer = question["correct_answer"]
     options = question["options"]
     await state.update_data(correct_verb=correct_answer)
-    builder = ReplyKeyboardBuilder()
-    row = []
-    for verb in options:
-        text = verb[mode[-2:]]
-        button = KeyboardButton(text=text)
-        # Добавляем в текущий ряд, если текст короткий
-        if len(text) <= 7:
-            row.append(button)
-            if len(row) == 4:
-                builder.row(*row)
-                row = []
-        else:
-            # если длинная кнопка — отправляем текущий ряд и добавляем её отдельно
-            if row:
-                builder.row(*row)
-                row = []
-            builder.row(button)
-    # добавляем остатки
-    if row:
-        builder.row(*row)
-    # завершить игру — последней строкой
-    builder.row(KeyboardButton(text="Завершить игру"))
+    builder = quiz_keyboard(options, mode[-2:])
     await message.answer(
         f"Как переводится это слово? {correct_answer[mode[:2]].capitalize()}",
         reply_markup=builder.as_markup(resize_keyboard=True)
@@ -179,33 +158,7 @@ async def check_quiz_answer(message: Message, state: FSMContext):
         options = question["options"]
         await state.update_data(correct_verb=correct_answer)
 
-        builder = ReplyKeyboardBuilder()
-
-        row = []
-        for verb in options:
-            text = verb[mode[-2:]]
-            button = KeyboardButton(text=text)
-
-            # Добавляем в текущий ряд, если текст короткий
-            if len(text) <= 7:
-                row.append(button)
-                if len(row) == 4:
-                    builder.row(*row)
-                    row = []
-            else:
-                # если длинная кнопка — отправляем текущий ряд и добавляем её отдельно
-                if row:
-                    builder.row(*row)
-                    row = []
-                builder.row(button)
-
-        # добавляем остатки
-        if row:
-            builder.row(*row)
-
-        # завершить игру — последней строкой
-        builder.row(KeyboardButton(text="Завершить игру"))
-
+        builder = quiz_keyboard(options, mode[-2:])
         await message.answer(
             f"✅ Верно!\n\nКак переводится этот глагол? {correct_answer[mode[:2]].capitalize()}",
             reply_markup=builder.as_markup(resize_keyboard=True)

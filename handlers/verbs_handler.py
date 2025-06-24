@@ -5,7 +5,7 @@ from aiogram.types import Message, KeyboardButton, ReplyKeyboardRemove
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from games.verb_game import VerbGame
 from states import AppState, VerbStates
-from utils.ui import show_game_menu
+from utils.ui import show_game_menu, quiz_keyboard
 from utils.diff_answer import diff_answers
 
 verbs_router = Router()
@@ -127,10 +127,7 @@ async def check_word_to_word_answer(message: Message, state: FSMContext):
     correct_answer = question["correct_answer"]
     options = question["options"]
     await state.update_data(correct_verb=correct_answer)
-    builder = ReplyKeyboardBuilder()
-    for i in range(0, len(options), 4):
-        builder.row(*[KeyboardButton(text=verb[mode[-2:]]) for verb in options[i:i + 4]])
-    builder.row(KeyboardButton(text="Завершить игру"))
+    builder = quiz_keyboard(options, mode[-2:])
     await message.answer(
         f"Как переводится этот глагол? {correct_answer[mode[:2]].capitalize()}",
         reply_markup=builder.as_markup(resize_keyboard=True)
@@ -155,10 +152,7 @@ async def check_quiz_answer(message: Message, state: FSMContext):
         options = question["options"]
         await state.update_data(correct_verb=correct_answer)
 
-        builder = ReplyKeyboardBuilder()
-        for i in range(0, len(options), 4):
-            builder.row(*[KeyboardButton(text=verb[mode[-2:]]) for verb in options[i:i + 4]])
-        builder.row(KeyboardButton(text="Завершить игру"))
+        builder = quiz_keyboard(options, mode[-2:])
 
         await message.answer(
             f"✅ Верно!\n\nКак переводится этот глагол? {correct_answer[mode[:2]].capitalize()}",
