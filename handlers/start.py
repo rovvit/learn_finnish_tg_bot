@@ -1,3 +1,5 @@
+import traceback
+
 from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import StateFilter
@@ -9,6 +11,7 @@ from states import AppState
 from handlers.numbers_handler import choose_difficulty as numbers_choose_difficulty
 from handlers.colors_handler import choose_mode as colors_start
 from handlers.nouns_handler import choose_mode as nouns_start
+from handlers.clock_handler import start_game as clock_start
 from utils.ui import show_game_menu
 
 start_router = Router()
@@ -41,7 +44,13 @@ async def choose_game(message: Message, state: FSMContext):
             await state.set_state(AppState.nouns_game)
             await message.answer("Вы выбрали игру Существительные. Начинаем!")
             await nouns_start(message, state)
+        elif text == "время":
+            await state.set_state(AppState.clock_game)
+            await message.answer("Вы выбрали игру Время. Начинаем!")
+            await clock_start(message, state)
         else:
             await message.answer("Пожалуйста, выберите игру, используя кнопки.")
-    except Exception:
+    except Exception as e:
+        print("Ошибка:", e)
+        traceback.print_exc()
         await message.answer("Пожалуйста, выберите из предложенных вариантов.")

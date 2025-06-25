@@ -7,6 +7,7 @@ class AppState(StatesGroup):
     verbs_game = State()
     weather_game = State()
     nouns_game = State()
+    clock_game = State()
 
 class NumbersStates(StatesGroup):
     choosing_difficulty = State()
@@ -34,3 +35,6 @@ class NounsStates(StatesGroup):
     game_in_progress = State()
     choosing_difficulty = State()
     word_to_word = State()
+
+class ClockStates(StatesGroup):
+    game_in_progress = State()

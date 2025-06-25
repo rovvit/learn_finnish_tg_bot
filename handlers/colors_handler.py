@@ -76,10 +76,6 @@ async def color_quiz_emoji(message: Message, state: FSMContext):
     correct_answer = question["correct_answer"]
     options = question["options"]
 
-    # builder = ReplyKeyboardBuilder()
-    # for i in range(0, len(options), 4):
-    #     builder.row(*[KeyboardButton(text=color['fi']) for color in options[i:i+4]])
-    # builder.row(KeyboardButton(text="Завершить игру"))
     builder = quiz_keyboard(options, 'fi')
 
     await message.answer(
@@ -104,10 +100,6 @@ async def check_quiz_answer(message: Message, state: FSMContext):
         new_question = question["correct_answer"]
         options = question["options"]
 
-        # builder = ReplyKeyboardBuilder()
-        # for i in range(0, len(options), 4):
-        #     builder.row(*[KeyboardButton(text=color['fi']) for color in options[i:i+4]])
-        # builder.row(KeyboardButton(text="Завершить игру"))
         builder = quiz_keyboard(options, 'fi')
 
         await message.answer(

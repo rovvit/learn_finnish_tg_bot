@@ -10,6 +10,7 @@ async def show_game_menu(message: Message, state: FSMContext):
         KeyboardButton(text="Числа"),
         KeyboardButton(text="Цвета"),
         KeyboardButton(text="Погода"),
+        KeyboardButton(text="Время"),
     )
     builder.row(
         KeyboardButton(text="Глаголы"),
