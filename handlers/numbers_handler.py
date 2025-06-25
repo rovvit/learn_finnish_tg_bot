@@ -10,10 +10,12 @@ from utils.ui import show_game_menu
 from utils.diff_answer import diff_answers
 
 numbers_router = Router()
-game = NumbersGame()
+
 
 @numbers_router.message(StateFilter(AppState.numbers_game), F.text.casefold() == "числа")
 async def choose_difficulty(message: Message, state: FSMContext):
+    game = NumbersGame()
+    await state.update_data(game=game)
     builder = ReplyKeyboardBuilder()
     builder.row(
         KeyboardButton(text="Лёгкий"),
@@ -21,11 +23,16 @@ async def choose_difficulty(message: Message, state: FSMContext):
         KeyboardButton(text="Сложный"),
         KeyboardButton(text="Завершить игру")
     )
-    await message.answer("Правила: будет загадано число (от 1 до 10, 100 или 1000). Нужно написать загаданное число на финнском.\nИгра идёт до 10 вопросов.\n\nВыбери уровень сложности:", reply_markup=builder.as_markup(resize_keyboard=True))
+    await message.answer(
+        "Правила: будет загадано число (от 1 до 10, 100 или 1000). Нужно написать загаданное число на финнском.\nИгра идёт до 10 вопросов.\n\nВыбери уровень сложности:",
+        reply_markup=builder.as_markup(resize_keyboard=True))
     await state.set_state(NumbersStates.choosing_difficulty)
+
 
 @numbers_router.message(StateFilter(NumbersStates.choosing_difficulty))
 async def start_game_or_stop(message: Message, state: FSMContext):
+    data = await state.get_data()
+    game: NumbersGame = data.get("game")
     if message.text == "Завершить игру":
         await state.set_state(AppState.choosing_game_type)
         await show_game_menu(message, state)
@@ -55,8 +62,11 @@ async def start_game_or_stop(message: Message, state: FSMContext):
     await message.answer(f"Напиши число словами: {number}", reply_markup=builder.as_markup(resize_keyboard=True))
     await state.set_state(NumbersStates.game_in_progress)
 
+
 @numbers_router.message(StateFilter(NumbersStates.game_in_progress))
 async def check_answer(message: Message, state: FSMContext):
+    data = await state.get_data()
+    game: NumbersGame = data.get("game")
     if message.text == "Завершить игру":
         await show_game_menu(message, state)
         return
@@ -70,7 +80,8 @@ async def check_answer(message: Message, state: FSMContext):
         number = game.new_question(max_number)
         builder = ReplyKeyboardBuilder()
         builder.row(KeyboardButton(text="Завершить игру"))
-        await message.answer(f"✅ Верно!\n\nСледующее число: {number}", reply_markup=builder.as_markup(resize_keyboard=True))
+        await message.answer(f"✅ Верно!\n\nСледующее число: {number}",
+                             reply_markup=builder.as_markup(resize_keyboard=True))
     else:
         highlighted = diff_answers(answer, correct_answer)
         builder = ReplyKeyboardBuilder()
@@ -87,4 +98,5 @@ async def check_answer(message: Message, state: FSMContext):
             return
         else:
             number = game.new_question(max_number)
-            await message.answer(f"Напиши число словами: {number}", reply_markup=builder.as_markup(resize_keyboard=True))
+            await message.answer(f"Напиши число словами: {number}",
+                                 reply_markup=builder.as_markup(resize_keyboard=True))

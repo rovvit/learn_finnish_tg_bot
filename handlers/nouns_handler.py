@@ -10,7 +10,6 @@ from utils.ui import show_game_menu, quiz_keyboard
 from utils.diff_answer import diff_answers
 
 nouns_router = Router()
-game = NounsGame()
 
 MODES = {
     'infliction': 'Склонять',
@@ -18,8 +17,11 @@ MODES = {
     'choose_one_ru_fi': 'Выбор перевода (RU-FI)'
 }
 
+
 @nouns_router.message(StateFilter(AppState.nouns_game), F.text.casefold() == "существительные")
 async def choose_mode(message: Message, state: FSMContext):
+    game = NounsGame()
+    await state.update_data(game=game)
     builder = ReplyKeyboardBuilder()
     builder.row(
         KeyboardButton(text=MODES['infliction']),
@@ -34,8 +36,11 @@ async def choose_mode(message: Message, state: FSMContext):
     await message.answer("Выбери режим игры:", reply_markup=builder.as_markup(resize_keyboard=True))
     await state.set_state(NounsStates.choosing_mode)
 
+
 @nouns_router.message(StateFilter(NounsStates.choosing_mode))
 async def start_end_game_or_stop(message: Message, state: FSMContext):
+    data = await state.get_data()
+    game: NounsGame = data.get("game")
     if message.text == "Завершить игру":
         await show_game_menu(message, state)
         return
@@ -86,11 +91,16 @@ async def start_end_game_or_stop(message: Message, state: FSMContext):
         builder.row(KeyboardButton(text="Завершить игру"))
         question = game.new_word_question()
 
-        await message.answer(f"Поставь слово в правильную форму: {question['case']['q_nonpers'].capitalize()} ({question['word'].fi.capitalize()})? ", reply_markup=builder.as_markup(resize_keyboard=True))
+        await message.answer(
+            f"Поставь слово в правильную форму: {question['case']['q_nonpers'].capitalize()} ({question['word'].fi.capitalize()})? ",
+            reply_markup=builder.as_markup(resize_keyboard=True))
         await state.set_state(NounsStates.game_in_progress)
+
 
 @nouns_router.message(StateFilter(NounsStates.game_in_progress))
 async def check_end_answer(message: Message, state: FSMContext):
+    data = await state.get_data()
+    game: NounsGame = data.get("game")
     if message.text == "Завершить игру" or game.inner_count == 10:
         await message.answer(f"Игра заверешна! Итоговый счёт: {game.correct_count}/{game.inner_count}")
         await show_game_menu(message, state)
@@ -111,10 +121,14 @@ async def check_end_answer(message: Message, state: FSMContext):
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
     question = game.new_word_question()
-    await message.answer(f"Поставь слово в правильную форму: {question['case']['q_nonpers'].capitalize()} ({question['word'].fi.capitalize()})? ")
+    await message.answer(
+        f"Поставь слово в правильную форму: {question['case']['q_nonpers'].capitalize()} ({question['word'].fi.capitalize()})? ")
+
 
 @nouns_router.message(StateFilter(NounsStates.choosing_difficulty))
 async def check_word_to_word_answer(message: Message, state: FSMContext):
+    data = await state.get_data()
+    game: NounsGame = data.get("game")
     text = message.text.strip()
     if message.text == "Завершить игру" or game.inner_count == 10:
         await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
@@ -140,8 +154,11 @@ async def check_word_to_word_answer(message: Message, state: FSMContext):
     )
     await state.set_state(NounsStates.word_to_word)
 
+
 @nouns_router.message(StateFilter(NounsStates.word_to_word))
 async def check_quiz_answer(message: Message, state: FSMContext):
+    data = await state.get_data()
+    game: NounsGame = data.get("game")
     if message.text == "Завершить игру" or game.inner_count == 10:
         await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
         await show_game_menu(message, state)

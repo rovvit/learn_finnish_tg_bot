@@ -9,15 +9,18 @@ from games.colors_game import ColorsGame
 from states import AppState, ColorsStates
 
 colors_router = Router()
-game = ColorsGame()
+
 MODES = {
     "EMOJI": "Выбор цвета по эмодзи",
     "EMOJI_TO_WORD": "Написать слово по эмодзи",
     "OTHER": "Другой режим (скоро)"
 }
 
+
 @colors_router.message(StateFilter(AppState.colors_game), F.text.casefold() == "цвета")
 async def choose_mode(message: Message, state: FSMContext):
+    game = ColorsGame()
+    await state.update_data(game=game)
     builder = ReplyKeyboardBuilder()
     builder.row(
         KeyboardButton(text=MODES["EMOJI"]),
@@ -27,8 +30,11 @@ async def choose_mode(message: Message, state: FSMContext):
     await message.answer("Выбери режим игры:", reply_markup=builder.as_markup(resize_keyboard=True))
     await state.set_state(ColorsStates.choosing_mode)
 
+
 @colors_router.message(StateFilter(ColorsStates.choosing_mode))
 async def choose_difficulty(message: Message, state: FSMContext):
+    data = await state.get_data()
+    game: ColorsGame = data.get("game")
     if message.text == MODES["EMOJI"]:
         await state.update_data(mode="emoji")
         builder = ReplyKeyboardBuilder()
@@ -38,7 +44,9 @@ async def choose_difficulty(message: Message, state: FSMContext):
             KeyboardButton(text="12 цветов"),
             KeyboardButton(text="Завершить игру")
         )
-        await message.answer("Правила игры: тебе будет задан цвет, тебе нужно будет выбрать правильный вариант.\nИгра идёт до 10 вопросов.\n\nВыбери уровень сложности:", reply_markup=builder.as_markup(resize_keyboard=True))
+        await message.answer(
+            "Правила игры: тебе будет задан цвет, тебе нужно будет выбрать правильный вариант.\nИгра идёт до 10 вопросов.\n\nВыбери уровень сложности:",
+            reply_markup=builder.as_markup(resize_keyboard=True))
         await state.set_state(ColorsStates.choosing_difficulty_emoji)
     elif message.text == MODES["EMOJI_TO_WORD"]:
         await message.answer(
@@ -57,8 +65,11 @@ async def choose_difficulty(message: Message, state: FSMContext):
     else:
         await message.answer("Этот режим пока в разработке.")
 
+
 @colors_router.message(StateFilter(ColorsStates.choosing_difficulty_emoji))
 async def color_quiz_emoji(message: Message, state: FSMContext):
+    data = await state.get_data()
+    game: ColorsGame = data.get("game")
     text = message.text.strip()
     if text == "Завершить игру" or game.inner_count == 10:
         await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
@@ -84,8 +95,11 @@ async def color_quiz_emoji(message: Message, state: FSMContext):
     )
     await state.set_state(ColorsStates.game_in_progress)
 
+
 @colors_router.message(StateFilter(ColorsStates.game_in_progress))
 async def check_quiz_answer(message: Message, state: FSMContext):
+    data = await state.get_data()
+    game: ColorsGame = data.get("game")
     if message.text == "Завершить игру" or game.inner_count == 10:
         await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
         await show_game_menu(message, state)
@@ -111,8 +125,11 @@ async def check_quiz_answer(message: Message, state: FSMContext):
             f"❌ Неверно. Попробуй еще раз."
         )
 
+
 @colors_router.message(StateFilter(ColorsStates.word_to_word))
 async def emoji_to_word_check(message: Message, state: FSMContext):
+    data = await state.get_data()
+    game: ColorsGame = data.get("game")
     if message.text == "Завершить игру":
         await show_game_menu(message, state)
         return
@@ -142,4 +159,5 @@ async def emoji_to_word_check(message: Message, state: FSMContext):
         return
     else:
         new_question = game.new_word_question()
-        await message.answer(f"Напиши цвет на финском: {new_question["ru"]} {new_question["emoji"]}", reply_markup=builder.as_markup(resize_keyboard=True))
+        await message.answer(f"Напиши цвет на финском: {new_question["ru"]} {new_question["emoji"]}",
+                             reply_markup=builder.as_markup(resize_keyboard=True))
