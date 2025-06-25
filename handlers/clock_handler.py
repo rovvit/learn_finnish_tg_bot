@@ -16,6 +16,9 @@ clock_router = Router()
 async def start_game(message: Message, state: FSMContext):
     game = ClockGame()
     await state.update_data(game=game)
+    await message.answer(
+        "Правила: нужно написать на финском, сколько сейчас времени"
+    )
     question = game.new_clock_question()
     builder = ReplyKeyboardBuilder()
     builder.row(KeyboardButton(text="Завершить игру"))
