@@ -14,7 +14,7 @@ class ClockGame(BaseGame):
         self.hour = random.randint(0, 23)
         self.minute = random.choices(
             population=list(range(60)),
-            weights=[10 if m in {0, 15, 30, 45} else 1 for m in range(60)]
+            weights=[15 if m in {0, 15, 30, 45} else 1 for m in range(60)]
         )[0]
         self.clock_image = generate_clock(self.hour, self.minute)
 
