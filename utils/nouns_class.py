@@ -13,6 +13,8 @@ class NounWord:
     def __init__(self, data):
         self.fi = data['fi']
         self.ru = data['ru']
+        if data['base']:
+            self.base = data['base']
         self.isFinnish = data['isFinnish']
 
     def inflict(self, case: int) -> str:
@@ -26,33 +28,33 @@ class NounWord:
                 raise Exception('No such case!')
 
     def inflict_genetiivi(self) -> str:
-        word = self.fi
-        word_KPTed = KPT_transform(self.fi)
-        if word[-1] in VOWELS:
-            if word_KPTed[-1:] == 'e':
-                return word_KPTed + 'en'
-            if word[-1:] == 'i':
-                if self.isFinnish:
-                    if word_KPTed[-2:] == 'si':
-                        return word_KPTed[:-2] + 'den'
-                    return word_KPTed[:-1] + 'en'
-            return word_KPTed + 'n'
-        elif word[-3:] == 'nen':
-            return word_KPTed[:-3] + 'sen'
-        elif word[-2:] in ['as', 'äs']:
-            return word_KPTed[:-1] + word_KPTed[-2] + 'n'
-        elif word[-2:] == 'is':
-            # тут должен быть if потому что iksen
-            return word_KPTed[:-1] + 'in'
-        elif word[-2:] in ['us', 'ys']:
-            # тут должен быть if потому что iksen
-            return word_KPTed[:-1]  + 'den'
-        elif word[-2:] in ['os', 'ös']:
-            return word_KPTed[:-1]  + 'ksen'
-        elif word[-3:] in ['ton', 'tön']:
-            if word_KPTed[-2] == 'ö':
-                return word_KPTed[:-3] + 'ttömän'
-            return word_KPTed[:-3]  + 'ttoman'
+        # word = self.fi
+        # word_KPTed = KPT_transform(self.fi)
+        # if word[-1] in VOWELS:
+        #     if word_KPTed[-1:] == 'e':
+        #         return word_KPTed + 'en'
+        #     if word[-1:] == 'i':
+        #         if self.isFinnish:
+        #             if word_KPTed[-2:] == 'si':
+        #                 return word_KPTed[:-2] + 'den'
+        #             return word_KPTed[:-1] + 'en'
+        #     return word_KPTed + 'n'
+        # elif word[-3:] == 'nen':
+        #     return word_KPTed[:-3] + 'sen'
+        # elif word[-2:] in ['as', 'äs']:
+        #     return word_KPTed[:-1] + word_KPTed[-2] + 'n'
+        # elif word[-2:] == 'is':
+        #     # тут должен быть if потому что iksen
+        #     return word_KPTed[:-1] + 'in'
+        # elif word[-2:] in ['us', 'ys']:
+        #     # тут должен быть if потому что iksen
+        #     return word_KPTed[:-1]  + 'den'
+        # elif word[-2:] in ['os', 'ös']:
+        #     return word_KPTed[:-1]  + 'ksen'
+        # elif word[-3:] in ['ton', 'tön']:
+        #     if word_KPTed[-2] == 'ö':
+        #         return word_KPTed[:-3] + 'ttömän'
+        #     return word_KPTed[:-3]  + 'ttoman'
         # elif word_KPTed[-2:] == 'in':
         # тут надо починить КРТ
         #     return word_KPTed[:-2] + 'imen'
@@ -60,10 +62,11 @@ class NounWord:
         #     pass
         # elif word_KPTed[-3] in ['tar', 'tär']:
         #     pass
-        elif not self.isFinnish:
-            return self.fi + 'in'
-        else:
-            raise Exception("I don't know how to inflict that :(")
+        # elif not self.isFinnish:
+        #     return self.fi + 'in'
+        # else:
+        #     raise Exception("I don't know how to inflict that :(")
+        return str(self.base) + 'n'
 
     def inflict_partitiivi(self) -> str:
         word = self.fi
