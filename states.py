@@ -35,6 +35,7 @@ class NounsStates(StatesGroup):
     game_in_progress = State()
     choosing_difficulty = State()
     word_to_word = State()
+    choosing_case = State()
 
 class ClockStates(StatesGroup):
     game_in_progress = State()

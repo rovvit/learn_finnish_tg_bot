@@ -39,8 +39,6 @@ async def choose_mode(message: Message, state: FSMContext):
 
 @nouns_router.message(StateFilter(NounsStates.choosing_mode))
 async def start_end_game_or_stop(message: Message, state: FSMContext):
-    data = await state.get_data()
-    game: NounsGame = data.get("game")
     if message.text == "Завершить игру":
         await show_game_menu(message, state)
         return
@@ -83,23 +81,47 @@ async def start_end_game_or_stop(message: Message, state: FSMContext):
             reply_markup=builder.as_markup(resize_keyboard=True))
         await state.set_state(NounsStates.choosing_difficulty)
     if message.text == MODES['infliction']:
-        await message.answer(
-            "Отлично! Начинаем игру.",
-            reply_markup=ReplyKeyboardRemove()
-        )
         builder = ReplyKeyboardBuilder()
-        builder.row(KeyboardButton(text="Завершить игру"))
-        question = game.new_word_question()
+        builder.row(
+            KeyboardButton(text="Genetiivi"),
+            KeyboardButton(text="Partitiivi"),
+            KeyboardButton(text="Все сразу")
+        )
+        await message.answer("Выбери падеж",
+                             reply_markup=builder.as_markup(resize_keyboard=True))
+        await state.set_state(NounsStates.choosing_case)
 
-        await message.answer(
-            f"Поставь слово в правильную форму: {question['case']['q_nonpers'].capitalize()} ({question['word'].fi.capitalize()})? ",
-            reply_markup=builder.as_markup(resize_keyboard=True))
-        await state.set_state(NounsStates.game_in_progress)
+
+@nouns_router.message(StateFilter(NounsStates.choosing_case))
+async def choose_case(message: Message, state: FSMContext):
+    data = await state.get_data()
+    game: NounsGame = data.get("game")
+    match message.text.strip().lower():
+        case "genetiivi":
+            case = 1
+        case "partitiivi":
+            case = 2
+        case _:
+            case = 0
+    await message.answer(
+        "Отлично! Начинаем игру.",
+        reply_markup=ReplyKeyboardRemove()
+    )
+    await state.update_data(case=case)
+    builder = ReplyKeyboardBuilder()
+    builder.row(KeyboardButton(text="Завершить игру"))
+    question = game.new_word_question(case=case)
+
+    await message.answer(
+        f"Поставь слово в правильную форму: {question['case']['q_nonpers'].capitalize()} ({question['word'].fi.capitalize()})? ",
+        reply_markup=builder.as_markup(resize_keyboard=True))
+    await state.set_state(NounsStates.game_in_progress)
 
 
 @nouns_router.message(StateFilter(NounsStates.game_in_progress))
 async def check_end_answer(message: Message, state: FSMContext):
     data = await state.get_data()
+    case: int = data.get("case")
     game: NounsGame = data.get("game")
     if message.text == "Завершить игру" or game.inner_count == 10:
         await message.answer(f"Игра заверешна! Итоговый счёт: {game.correct_count}/{game.inner_count}")
@@ -120,7 +142,7 @@ async def check_end_answer(message: Message, state: FSMContext):
             parse_mode="HTML",
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
-    question = game.new_word_question()
+    question = game.new_word_question(case)
     await message.answer(
         f"Поставь слово в правильную форму: {question['case']['q_nonpers'].capitalize()} ({question['word'].fi.capitalize()})? ")
 
