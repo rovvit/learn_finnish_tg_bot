@@ -8,9 +8,11 @@ from handlers.numbers_handler import numbers_router
 from handlers.colors_handler import colors_router
 from handlers.verbs_handler import verbs_router
 from handlers.weather_handler import weather_router
+from db.db import init
 
 
 async def main():
+    await init()
     dp.include_router(start_router)
     dp.include_router(numbers_router)
     dp.include_router(colors_router)

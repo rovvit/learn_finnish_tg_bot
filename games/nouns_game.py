@@ -1,5 +1,5 @@
 import random
-from utils.db import get_table, DB_PATH
+from db.db import get_table, DB_PATH
 from games.base_game import BaseGame
 from utils.nouns_class import NounWord, CASES
 
