@@ -8,6 +8,7 @@ from games.nouns_game import NounsGame
 from states import AppState, NounsStates
 from utils.ui import show_game_menu, quiz_keyboard
 from utils.diff_answer import diff_answers
+from db.db import get_nouns
 
 nouns_router = Router()
 
@@ -20,7 +21,9 @@ MODES = {
 
 @nouns_router.message(StateFilter(AppState.nouns_game), F.text.casefold() == "существительные")
 async def choose_mode(message: Message, state: FSMContext):
-    game = NounsGame()
+
+    game = NounsGame(await get_nouns())
+    print(await get_nouns())
     await state.update_data(game=game)
     builder = ReplyKeyboardBuilder()
     builder.row(

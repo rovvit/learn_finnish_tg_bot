@@ -1,13 +1,15 @@
 import random
-from db.db import get_table, DB_PATH
 from games.base_game import BaseGame
 from utils.nouns_class import NounWord, CASES
 
-print(DB_PATH.resolve())
-NOUNS = get_table('nouns')
-
 class NounsGame(BaseGame):
-    ITEMS = [dict(x) for x in NOUNS]
+    def __init__(self, items):
+        super().__init__()
+        self.ITEMS = items
+        self.inner_count = 0
+        self.correct_count = 0
+        self.incorrect_count = 0
+        self.correct_answer = None
 
     def new_word_question(self, case: int = 0):
         self.inner_count += 1
