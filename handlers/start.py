@@ -5,6 +5,7 @@ from aiogram.types import Message
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
+from db.db import get_or_create_user
 from handlers.verbs_handler import choose_mode as verbs_start
 from handlers.weather_handler import choose_mode as weather_start
 from states import AppState
@@ -18,6 +19,12 @@ start_router = Router()
 
 @start_router.message(StateFilter(None))
 async def cmd_start(message: Message, state: FSMContext):
+    user = await get_or_create_user(
+        telegram_id=message.from_user.id,
+        username=message.from_user.username,
+        full_name=message.from_user.full_name or message.from_user.first_name,
+    )
+    print(f"User from DB: {user}")
     await show_game_menu(message, state)
 
 @start_router.message(StateFilter(AppState.choosing_game_type))

@@ -24,3 +24,18 @@ class Verb(Model):
     type = fields.SmallIntField(null=True)
     isfinnish = fields.BooleanField(default=False)
 
+class User(Model):
+    id = fields.IntField(pk=True)
+    telegram_id = fields.BigIntField(unique=True)
+    username = fields.CharField(max_length=255, null=True)
+    full_name = fields.CharField(max_length=255, null=True)
+    is_admin = fields.BooleanField(default=False)
+    mode = fields.CharField(max_length=50, default='user')
+    created_at = fields.DatetimeField(auto_now_add=True)
+    updated_at = fields.DatetimeField(auto_now=True)
+
+    class Meta:
+        table = "users"
+
+    def __str__(self):
+        return f"<User {self.telegram_id} ({self.mode})>"
