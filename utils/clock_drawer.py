@@ -1,5 +1,5 @@
+from PIL import Image, ImageDraw
 import io
-import cairo
 import math
 
 def generate_clock(hour: int, minute: int):
@@ -13,30 +13,33 @@ def generate_clock(hour: int, minute: int):
     minute_hand_length = radius * 0.8
     hand_inner_offset = radius * 0.08
 
-    # Создаем изображение в памяти
-    buffer = io.BytesIO()
-    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, canvas_size, canvas_size)
-    ctx = cairo.Context(surface)
+    # Создаём белый холст
+    img = Image.new("RGB", (canvas_size, canvas_size), "white")
+    draw = ImageDraw.Draw(img)
 
-    # Фон — белый
-    ctx.set_source_rgb(1, 1, 1)
-    ctx.paint()
+    # Рамка
+    draw.rectangle(
+        [margin, margin, canvas_size - margin, canvas_size - margin],
+        outline="black",
+        width=2
+    )
 
-    # Рамка вокруг холста
-    ctx.set_source_rgb(0, 0, 0)
-    ctx.set_line_width(2.0)
-    ctx.rectangle(margin, margin, canvas_size - 2 * margin, canvas_size - 2 * margin)
-    ctx.stroke()
+    # Циферблат
+    draw.ellipse(
+        [center - radius, center - radius,
+         center + radius, center + radius],
+        outline="black",
+        width=2
+    )
 
-    # Обводка циферблата
-    ctx.arc(center, center, radius, 0, 2 * math.pi)
-    ctx.stroke()
+    # Центральная точка
+    draw.ellipse(
+        [center - pivot_radius, center - pivot_radius,
+         center + pivot_radius, center + pivot_radius],
+        fill="black"
+    )
 
-    # Центр круга
-    ctx.arc(center, center, pivot_radius, 0, 2 * math.pi)
-    ctx.fill()
-
-    # Часовые метки (деления)
+    # Деления
     for i in range(12):
         angle = 2 * math.pi * (i / 12)
         outer_x = center + radius * 0.96 * math.sin(angle)
@@ -44,35 +47,40 @@ def generate_clock(hour: int, minute: int):
         inner_x = center + radius * 0.75 * math.sin(angle)
         inner_y = center - radius * 0.75 * math.cos(angle)
 
-        ctx.set_line_width(1)
-        ctx.move_to(inner_x, inner_y)
-        ctx.line_to(outer_x, outer_y)
-        ctx.stroke()
+        draw.line(
+            [(inner_x, inner_y), (outer_x, outer_y)],
+            fill="black",
+            width=2
+        )
 
     # Часовая стрелка
-    ctx.set_line_width(7)
     hour_angle = 2 * math.pi * (hour % 12 + minute / 60) / 12
     hx_outer = center + hour_hand_length * math.sin(hour_angle)
     hy_outer = center - hour_hand_length * math.cos(hour_angle)
     hx_inner = center + hand_inner_offset * math.sin(hour_angle)
     hy_inner = center - hand_inner_offset * math.cos(hour_angle)
 
-    ctx.move_to(hx_outer, hy_outer)
-    ctx.line_to(hx_inner, hy_inner)
-    ctx.stroke()
+    draw.line(
+        [(hx_inner, hy_inner), (hx_outer, hy_outer)],
+        fill="black",
+        width=7
+    )
 
     # Минутная стрелка
-    ctx.set_line_width(4)
     minute_angle = 2 * math.pi * minute / 60
     mx_outer = center + minute_hand_length * math.sin(minute_angle)
     my_outer = center - minute_hand_length * math.cos(minute_angle)
     mx_inner = center + hand_inner_offset * math.sin(minute_angle)
     my_inner = center - hand_inner_offset * math.cos(minute_angle)
 
-    ctx.move_to(mx_outer, my_outer)
-    ctx.line_to(mx_inner, my_inner)
-    ctx.stroke()
+    draw.line(
+        [(mx_inner, my_inner), (mx_outer, my_outer)],
+        fill="black",
+        width=4
+    )
 
-    surface.write_to_png(buffer)
-    buffer.seek(0)
-    return buffer
+    # В буфер
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+    return buf
