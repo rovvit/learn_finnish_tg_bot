@@ -29,7 +29,9 @@ class ClockGame(BaseGame):
         text_hours = [num2words(h, lang='fi') for h in hours if (h > 0) and (h < 24)]
         stripped_ans = ' '.join(answer.strip().split()).lower()
         if self.minute == 0:
-            correct_answers = [f"tasan {text_hour}" for text_hour in text_hours]
+            correct_answers = [f"tasan {text_hour}" for text_hour in text_hours
+                               ] + [
+                                text_hour for text_hour in text_hours]
         else:
             correct_answers = [
                                   f"{text_hour} {num2words(self.minute, lang='fi')}" for text_hour in text_hours
