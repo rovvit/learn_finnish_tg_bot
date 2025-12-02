@@ -90,7 +90,7 @@ async def color_quiz_emoji(message: Message, state: FSMContext):
     builder = quiz_keyboard(options, 'fi')
 
     await message.answer(
-        f"Какой это цвет? {correct_answer["emoji"]} ({correct_answer["ru"]})",
+        f"Какой это цвет? {correct_answer['emoji']} ({correct_answer['ru']})",
         reply_markup=builder.as_markup(resize_keyboard=True)
     )
     await state.set_state(ColorsStates.game_in_progress)
