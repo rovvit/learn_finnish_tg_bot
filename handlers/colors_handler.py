@@ -50,7 +50,7 @@ async def choose_difficulty(message: Message, state: FSMContext):
         await state.set_state(ColorsStates.choosing_difficulty_emoji)
     elif message.text == MODES["EMOJI_TO_WORD"]:
         await message.answer(
-            "Отлично! Начинаем игру.\n\nПравила: необходимо написать заданный цвет на финнском",
+            "Отлично! Начинаем игру.\n\nПравила: необходимо написать заданный цвет на финском",
             reply_markup=ReplyKeyboardRemove()
         )
         question = game.new_word_question()

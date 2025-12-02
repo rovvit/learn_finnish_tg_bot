@@ -24,7 +24,7 @@ async def choose_difficulty(message: Message, state: FSMContext):
         KeyboardButton(text="Завершить игру")
     )
     await message.answer(
-        "Правила: будет загадано число (от 1 до 10, 100 или 1000). Нужно написать загаданное число на финнском.\nИгра идёт до 10 вопросов.\n\nВыбери уровень сложности:",
+        "Правила: будет загадано число (от 1 до 10, 100 или 1000). Нужно написать загаданное число на финском.\nИгра идёт до 10 вопросов.\n\nВыбери уровень сложности:",
         reply_markup=builder.as_markup(resize_keyboard=True))
     await state.set_state(NumbersStates.choosing_difficulty)
 
