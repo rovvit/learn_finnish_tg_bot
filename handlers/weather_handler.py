@@ -61,7 +61,7 @@ async def start_game_or_stop(message: Message, state: FSMContext):
             builder.row(*[KeyboardButton(text=verb[mode[-2:]]) for verb in options[i:i + 4]])
         builder.row(KeyboardButton(text="Завершить игру"))
         await message.answer(
-            f"Как переводится этот глагол? {correct_answer[mode[:2]].capitalize()} {correct_answer['emoji']}",
+            f"Как переводится это слово? {correct_answer[mode[:2]].capitalize()} {correct_answer['emoji']}",
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
         await state.set_state(WeatherStates.game_in_progress)
@@ -86,7 +86,7 @@ async def start_game_or_stop(message: Message, state: FSMContext):
             builder.row(*[KeyboardButton(text=verb[mode[-2:]]) for verb in options[i:i + 4]])
         builder.row(KeyboardButton(text="Завершить игру"))
         await message.answer(
-            f"Как переводится этот глагол? {correct_answer[mode[:2]].capitalize()} {correct_answer['emoji']}",
+            f"Как переводится это слово? {correct_answer[mode[:2]].capitalize()} {correct_answer['emoji']}",
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
         await state.set_state(WeatherStates.game_in_progress)
@@ -118,7 +118,7 @@ async def check_word_to_word_answer(message: Message, state: FSMContext):
         builder.row(KeyboardButton(text="Завершить игру"))
 
         await message.answer(
-            f"✅ Верно!\n\nКак переводится этот глагол? {correct_answer[mode[:2]].capitalize()} {correct_answer['emoji']}",
+            f"✅ Верно!\n\nКак переводится это слово? {correct_answer[mode[:2]].capitalize()} {correct_answer['emoji']}",
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
     else:
