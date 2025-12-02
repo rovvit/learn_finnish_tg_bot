@@ -117,7 +117,7 @@ async def check_quiz_answer(message: Message, state: FSMContext):
         builder = quiz_keyboard(options, 'fi')
 
         await message.answer(
-            f"✅ Верно!\n\nКакой это цвет? {new_question["emoji"]} ({new_question["ru"]})",
+            f"✅ Верно!\n\nКакой это цвет? {new_question['emoji']} ({new_question['ru']})",
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
     else:
@@ -159,5 +159,5 @@ async def emoji_to_word_check(message: Message, state: FSMContext):
         return
     else:
         new_question = game.new_word_question()
-        await message.answer(f"Напиши цвет на финском: {new_question["ru"]} {new_question["emoji"]}",
+        await message.answer(f"Напиши цвет на финском: {new_question['ru']} {new_question['emoji']}",
                              reply_markup=builder.as_markup(resize_keyboard=True))
