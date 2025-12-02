@@ -96,7 +96,7 @@ async def check_end_answer(message: Message, state: FSMContext):
     data = await state.get_data()
     game: VerbGame = data.get("game")
     if message.text == "Завершить игру" or game.inner_count == 10:
-        await message.answer(f"Игра заверешна! Итоговый счёт: {game.correct_count}/{game.inner_count}")
+        await message.answer(f"Игра завершена! Итоговый счёт: {game.correct_count}/{game.inner_count}")
         await show_game_menu(message, state)
         return
 
@@ -126,7 +126,7 @@ async def check_word_to_word_answer(message: Message, state: FSMContext):
     game: VerbGame = data.get("game")
     text = message.text.strip()
     if message.text == "Завершить игру" or game.inner_count == 10:
-        await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
+        await message.answer(f"Игра завершена! Итого количество ошибок: {game.incorrect_count}")
         await show_game_menu(message, state)
         return
 
@@ -155,7 +155,7 @@ async def check_quiz_answer(message: Message, state: FSMContext):
     data = await state.get_data()
     game: VerbGame = data.get("game")
     if message.text == "Завершить игру" or game.inner_count == 10:
-        await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
+        await message.answer(f"Игра завершена! Итого количество ошибок: {game.incorrect_count}")
         await show_game_menu(message, state)
         return
 

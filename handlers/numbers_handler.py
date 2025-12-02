@@ -93,7 +93,7 @@ async def check_answer(message: Message, state: FSMContext):
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
         if game.inner_count == 10:
-            await message.answer(f"Игра заверешна! Итого правильных ответов: {game.correct_count}/{game.inner_count}")
+            await message.answer(f"Игра завершена! Итого правильных ответов: {game.correct_count}/{game.inner_count}")
             await show_game_menu(message, state)
             return
         else:

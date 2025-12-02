@@ -98,7 +98,7 @@ async def check_word_to_word_answer(message: Message, state: FSMContext):
     game: WeatherGame = data.get("game")
     text = message.text.strip()
     if text == "Завершить игру" or game.inner_count == 10:
-        await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
+        await message.answer(f"Игра завершена! Итого количество ошибок: {game.incorrect_count}")
         await show_game_menu(message, state)
         return
 

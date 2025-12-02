@@ -72,7 +72,7 @@ async def color_quiz_emoji(message: Message, state: FSMContext):
     game: ColorsGame = data.get("game")
     text = message.text.strip()
     if text == "Завершить игру" or game.inner_count == 10:
-        await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
+        await message.answer(f"Игра завершена! Итого количество ошибок: {game.incorrect_count}")
         await show_game_menu(message, state)
         return
 
@@ -101,7 +101,7 @@ async def check_quiz_answer(message: Message, state: FSMContext):
     data = await state.get_data()
     game: ColorsGame = data.get("game")
     if message.text == "Завершить игру" or game.inner_count == 10:
-        await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
+        await message.answer(f"Игра завершена! Итого количество ошибок: {game.incorrect_count}")
         await show_game_menu(message, state)
         return
 
@@ -154,7 +154,7 @@ async def emoji_to_word_check(message: Message, state: FSMContext):
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
     if game.inner_count == 10:
-        await message.answer(f"Игра заверешна! Итого правильных ответов: {game.correct_count}/{game.inner_count}")
+        await message.answer(f"Игра завершена! Итого правильных ответов: {game.correct_count}/{game.inner_count}")
         await show_game_menu(message, state)
         return
     else:

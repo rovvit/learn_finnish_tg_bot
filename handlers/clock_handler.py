@@ -37,7 +37,7 @@ async def check_answer(message: Message, state: FSMContext):
     game: ClockGame = data.get("game")
 
     if text == "Завершить игру" or game.inner_count == 10:
-        await message.answer(f"Игра заверешна! Итого количество ошибок: {game.incorrect_count}")
+        await message.answer(f"Игра завершена! Итого количество ошибок: {game.incorrect_count}")
         await show_game_menu(message, state)
         return
 
