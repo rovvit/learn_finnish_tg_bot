@@ -1,23 +1,12 @@
 from tortoise import Tortoise
 from db.models import Noun, User
-import os
-import dotenv
-
-dotenv.load_dotenv()
-
-POSTGRES_HOST = os.getenv('POSTGRES_HOST')
-POSTGRES_PORT = os.getenv('POSTGRES_PORT')
-POSTGRES_USER = os.getenv('POSTGRES_USER')
-POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-POSTGRES_DB = os.getenv('POSTGRES_DB')
-
-db_url = f'postgres://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}'
+from db import DB_URL
 
 
 async def init():
     print("Starting DB init")
     await Tortoise.init(
-        db_url=db_url,
+        db_url=DB_URL,
         modules={'models': ['db.models']}
     )
     await Tortoise.generate_schemas()

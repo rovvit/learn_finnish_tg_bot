@@ -83,7 +83,7 @@ async def start_end_game_or_stop(message: Message, state: FSMContext):
         )
         builder = ReplyKeyboardBuilder()
         builder.row(KeyboardButton(text="Завершить игру"))
-        question = game.new_word_question()
+        question = await game.new_word_question()
 
         await message.answer(
             f"Поставь глагол в правильную форму: {question['pronoun'].capitalize()} ({question['verb']['fi']})",
@@ -114,7 +114,7 @@ async def check_end_answer(message: Message, state: FSMContext):
             parse_mode="HTML",
             reply_markup=builder.as_markup(resize_keyboard=True)
         )
-    question = game.new_word_question()
+    question = await game.new_word_question()
     await message.answer(
         f"Поставь глагол в правильную форму: {question['pronoun'].capitalize()} ({question['verb']['fi']})",
         reply_markup=builder.as_markup(resize_keyboard=True))

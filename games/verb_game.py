@@ -1,110 +1,21 @@
 import random
 
+from db.models import Verb
 from games.base_game import BaseGame
 from utils.KPT_transform import KPT_transform
 
 
+def make_end_for_third_person(verb_base: str, plural=False) -> str:
+    if plural:
+        if 'a' in verb_base or 'o' in verb_base or 'u' in verb_base:
+            return 'vat'
+        return 'vät'
+    if verb_base.endswith('aa') or verb_base.endswith('ää') or verb_base.endswith('uo'):
+        return ''
+    return verb_base[-1]
+
+
 class VerbGame(BaseGame):
-    ITEMS = [
-        {'ru': 'быть', 'fi': 'olla', 'type': 3},
-        {'ru': 'кушать', 'fi': 'syödä', 'type': 2},
-        {'ru': 'жить', 'fi': 'asua', 'type': 1},
-        {'ru': 'просыпаться', 'fi': 'herätä', 'type': 4},
-        {'ru': 'выбирать', 'fi': 'valita', 'type': 5},
-        {'ru': 'сидеть', 'fi': 'istua', 'type': 1},
-        {'ru': 'стоять', 'fi': 'seisoa', 'type': 1},
-        {'ru': 'пить', 'fi': 'juoda', 'type': 2},
-        {'ru': 'понимать', 'fi': 'ymmärtää', 'type': 1},
-        {'ru': 'помнить', 'fi': 'muistaa', 'type': 1},
-        {'ru': 'забыть', 'fi': 'unohtaa', 'type': 1},
-        {'ru': 'думать', 'fi': 'ajatella', 'type': 3},
-        {'ru': 'знать', 'fi': 'tietää', 'type': 1},
-        {'ru': 'уметь, знать', 'fi': 'osata', 'type': 4},
-        {'ru': 'учиться', 'fi': 'opiskella', 'type': 3},
-        {'ru': 'учиться', 'fi': 'oppia', 'type': 1},
-        {'ru': 'спрашивать', 'fi': 'kysyä', 'type': 1},
-        {'ru': 'запрашивать', 'fi': 'pyytää', 'type': 1},
-        {'ru': 'сказать', 'fi': 'sanoa', 'type': 1},
-        {'ru': 'рассказывать', 'fi': 'kertoa', 'type': 1},
-        {'ru': 'разговаривать', 'fi': 'keskustella', 'type': 3},
-        {'ru': 'спать', 'fi': 'nukkua', 'type': 1},
-        {'ru': 'вставать', 'fi': 'nousta', 'type': 3},
-        {'ru': 'врать', 'fi': 'maata', 'type': 4},
-        {'ru': 'мыть', 'fi': 'pestä', 'type': 3},
-        {'ru': 'мыть (посуду)', 'fi': 'tiskata', 'type': 4},
-        {'ru': 'убираться', 'fi': 'siivota', 'type': 4},
-        {'ru': 'пылесосить', 'fi': 'imuroida', 'type': 2},
-        {'ru': 'плавать', 'fi': 'uida', 'type': 2},
-        {'ru': 'гулять', 'fi': 'kävellä', 'type': 3},
-        {'ru': 'кататься на велосипеде', 'fi': 'pyöräillä', 'type': 3},
-        {'ru': 'водить', 'fi': 'ajaa', 'type': 1},
-        {'ru': 'бежать', 'fi': 'juosta', 'type': 3},
-        {'ru': 'играть (про спорт)', 'fi': 'pelata', 'type': 4},
-        {'ru': 'играть (про детей)', 'fi': 'leikkiä', 'type': 1},
-        {'ru': 'звать', 'fi': 'soittaa', 'type': 1},
-        {'ru': 'брать', 'fi': 'ottaa', 'type': 1},
-        {'ru': 'давать', 'fi': 'antaa', 'type': 1},
-        {'ru': 'одолжить', 'fi': 'lainata', 'type': 4},
-        {'ru': 'встретить', 'fi': 'tavata', 'type': 4},
-        {'ru': 'знакомиться', 'fi': 'tutustua', 'type': 1},
-        {'ru': 'делать', 'fi': 'tehdä', 'type': 2},
-        {'ru': 'видеть', 'fi': 'nähdä', 'type': 2},
-        {'ru': 'смотреть', 'fi': 'katsoa', 'type': 1},
-        {'ru': 'прийти', 'fi': 'tulla', 'type': 3},
-        {'ru': 'идти', 'fi': 'mennä', 'type': 3},
-        {'ru': 'уйти', 'fi': 'lähteä', 'type': 1},
-        {'ru': 'оставаться', 'fi': 'jäädä', 'type': 2},
-        {'ru': 'приезжать', 'fi': 'saapua', 'type': 1},
-        {'ru': 'посещать', 'fi': 'käydä', 'type': 2},
-        {'ru': 'приносить', 'fi': 'tuoda', 'type': 2},
-        {'ru': 'нести', 'fi': 'viedä', 'type': 2},
-        {'ru': 'любить', 'fi': 'rakastaa', 'type': 1},
-        {'ru': 'ненавидеть', 'fi': 'vihata', 'type': 4},
-        {'ru': 'любить(навиться)', 'fi': 'tykätä', 'type': 4},
-        {'ru': 'бояться', 'fi': 'pelätä', 'type': 4},
-        {'ru': 'одеваться', 'fi': 'pukea', 'type': 1},
-        {'ru': 'раздеваться', 'fi': 'riisua', 'type': 1},
-        {'ru': 'платить', 'fi': 'maksaa', 'type': 1},
-        {'ru': 'покупать', 'fi': 'ostaa', 'type': 1},
-        {'ru': 'продавать', 'fi': 'myydä', 'type': 2},
-        {'ru': 'писать', 'fi': 'kirjoittaa', 'type': 1},
-        {'ru': 'читать', 'fi': 'lukea', 'type': 1},
-        {'ru': 'слушать', 'fi': 'kuunnella', 'type': 3},
-        {'ru': 'слышать', 'fi': 'kuulla', 'type': 3},
-        {'ru': 'рисовать', 'fi': 'piirtää', 'type': 1},
-        {'ru': 'красить', 'fi': 'maalata', 'type': 4},
-        {'ru': 'смеяться', 'fi': 'nauraa', 'type': 1},
-        {'ru': 'плакать', 'fi': 'itkeä', 'type': 1},
-        {'ru': 'улыбаться', 'fi': 'hymyillä', 'type': 3},
-        {'ru': 'путешествовать', 'fi': 'matkustaa', 'type': 1},
-        {'ru': 'переезжать', 'fi': 'muuttaa', 'type': 1},
-        {'ru': 'толкать', 'fi': 'työntää', 'type': 1},
-        {'ru': 'тянуть', 'fi': 'vetää', 'type': 1},
-        {'ru': 'поднимать', 'fi': 'nostaa', 'type': 1},
-        {'ru': 'считать', 'fi': 'laskea', 'type': 1},
-        {'ru': 'помещать', 'fi': 'laittaa', 'type': 1},
-        {'ru': 'бросать', 'fi': 'heittää', 'type': 1},
-        {'ru': 'беспокоить', 'fi': 'häiritä', 'type': 5},
-        {'ru': 'нуждаться', 'fi': 'tarvita', 'type': 5},
-        {'ru': 'управлять', 'fi': 'hoitaa', 'type': 1},
-        {'ru': 'помогать', 'fi': 'auttaa', 'type': 1},
-        {'ru': 'запасать', 'fi': 'varata', 'type': 4},
-        {'ru': 'заказывать (напитки)', 'fi': 'tilata', 'type': 4},
-        {'ru': 'родиться', 'fi': 'syntyä', 'type': 1},
-        {'ru': 'жить', 'fi': 'elää', 'type': 1},
-        {'ru': 'умереть', 'fi': 'kuolla', 'type': 3},
-        {'ru': 'искать', 'fi': 'etsiä', 'type': 1},
-        {'ru': 'находить', 'fi': 'löytää', 'type': 1},
-        {'ru': 'открыть', 'fi': 'avata', 'type': 4},
-        {'ru': 'закрыть', 'fi': 'sulkea', 'type': 1},
-        {'ru': 'чинить', 'fi': 'korjata', 'type': 4},
-        {'ru': 'хватать (достаточно)', 'fi': 'riittää', 'type': 1},
-        {'ru': 'петь', 'fi': 'laulaa', 'type': 1},
-        {'ru': 'случаться', 'fi': 'tapahtua', 'type': 1},
-        {'ru': 'начинаться', 'fi': 'alkaa', 'type': 1},
-        {'ru': 'начинать', 'fi': 'aloittaa', 'type': 1},
-        {'ru': 'заканчивать', 'fi': 'loppua', 'type': 1},
-    ]
 
     PRONOUNS = {
         1: {'pronoun': 'minä', 'ending': 'n', 'negative': 'en'},
@@ -150,9 +61,18 @@ class VerbGame(BaseGame):
         }
     }
 
-    def new_word_question(self):
+    async def new_word_question(self):
         self.inner_count += 1
-        selected_verb = random.choice(self.ITEMS)
+
+        verb = await Verb.get_random()
+        selected_verb = {
+            "id": verb.id,
+            "ru": verb.ru,
+            "fi": verb.fi,
+            "type": verb.type,
+            "base": verb.base,
+        }
+
         selected_pronoun = random.randint(1, 6)
         answer = self.conjure_verb(selected_verb, selected_pronoun)
         self.correct_answer = answer
@@ -204,16 +124,8 @@ class VerbGame(BaseGame):
                 raise Exception('There is no such verb type!')
 
         if pronoun == 3:
-            return verb_base + self.make_end_for_third_person(verb_base)
+            return verb_base + make_end_for_third_person(verb_base)
         if pronoun == 6:
-            return verb_base + self.make_end_for_third_person(verb_base, True)
+            return verb_base + make_end_for_third_person(verb_base, True)
         return verb_base + self.PRONOUNS[pronoun]['ending']
 
-    def make_end_for_third_person(self, verb_base: str, plural=False) -> str:
-        if plural:
-            if 'a' in verb_base or 'o' in verb_base or 'u' in verb_base:
-                return 'vat'
-            return 'vät'
-        if verb_base.endswith('aa') or verb_base.endswith('ää') or verb_base.endswith('uo'):
-            return ''
-        return verb_base[-1]
